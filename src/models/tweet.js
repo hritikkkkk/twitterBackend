@@ -11,7 +11,7 @@ const tweetSchema = new Schema(
     hastags: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Hastag",
+        ref: "Hashtag",
       },
     ],
   },

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const hastagSchema = new Schema(
+const hashtagSchema = new Schema(
   {
     title: {
       type: String,
@@ -17,4 +17,4 @@ const hastagSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Hastag", hastagSchema);
+module.exports = mongoose.model("Hashtag", hashtagSchema);
