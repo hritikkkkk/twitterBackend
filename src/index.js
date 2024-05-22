@@ -1,7 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const apiRoutes = require("./routes");
 const { ServerConfig } = require("./config");
+
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 main()
   .then(() => {
@@ -14,6 +22,9 @@ main()
 async function main() {
   mongoose.connect(ServerConfig.DB);
 }
+
+app.use("/api", apiRoutes);
+
 app.listen(ServerConfig.PORT, async () => {
   console.log(`twitter Server is listening to the port ${ServerConfig.PORT}`);
 });
