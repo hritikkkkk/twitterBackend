@@ -9,7 +9,9 @@ const createTweet = async (data) => {
   try {
     const content = data.content;
     let tags = content.match(/#[a-zA-Z0-9_]+/g).map((tag) => tag.substring(1));
-
+    //user can include duplicate hashtags
+    let tagSet = new Set(tags);
+    tags = Array.from(tagSet);
     const tweet = await tweetRepo.create(data);
 
     let existingtags = await hashtagRepo.findByTag(tags);
