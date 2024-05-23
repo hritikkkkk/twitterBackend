@@ -1,7 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { tweetRepository, hastagRepository } = require("../repo");
 const AppError = require("../utils/errors/app-error");
-const hashtag = require("../models/hashtag");
 
 const tweetRepo = new tweetRepository();
 const hashtagRepo = new hastagRepository();
@@ -43,11 +42,11 @@ const createTweet = async (data) => {
 const deleteTweet = async (id) => {
   try {
     const tweet = await tweetRepo.destroy(id);
-    const tagsToUpdate = await hashtagRepo.findBytweetId(id);
-    for (const hashtag of tagsToUpdate) {
-      hashtag.tweets.pull(id);
-      await hashtag.save();
-    }
+    // const tagsToUpdate = await hashtagRepo.findBytweetId(id);
+    // for (const hashtag of tagsToUpdate) {
+    //   hashtag.tweets.pull(id);
+    //   await hashtag.save();
+    // }
     return tweet;
   } catch (error) {
     if (error.statusCode == StatusCodes.NOT_FOUND) {

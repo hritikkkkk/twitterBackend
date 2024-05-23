@@ -12,4 +12,18 @@ const tweetSchema = new Schema(
   { timestamps: true }
 );
 
+tweetSchema.pre("findOneAndDelete", async function (next) {
+  try {
+    const tweetId = this.getQuery()._id; // Get the ID of the tweet being deleted
+    const Hashtag = mongoose.model("Hashtag");
+    // Remove this tweet's ID from the tweets array in all related hashtags
+    await Hashtag.updateMany(
+      { tweets: tweetId },
+      { $pull: { tweets: tweetId } }
+    );
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = mongoose.model("Tweet", tweetSchema);
