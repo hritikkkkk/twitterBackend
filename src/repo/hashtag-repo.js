@@ -16,6 +16,12 @@ class hastagRepository extends CrudRepository {
 
     return tag;
   }
+  async findBytweetId(id) {
+    const tag = await Hashtag.find({
+      tweets: id,
+    });
+    return tag;
+  }
 }
 
 module.exports = hastagRepository;
