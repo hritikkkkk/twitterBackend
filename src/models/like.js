@@ -8,7 +8,7 @@ const likeSchema = new Schema(
     onModel: {
       type: String,
       required: true,
-      enum: [TWITTER, COMMENT],
+      enum: [TWEET, COMMENT],
     },
     likeable: {
       type: Schema.Types.ObjectId,
