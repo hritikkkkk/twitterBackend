@@ -42,11 +42,6 @@ const createTweet = async (data) => {
 const deleteTweet = async (id) => {
   try {
     const tweet = await tweetRepo.destroy(id);
-    // const tagsToUpdate = await hashtagRepo.findBytweetId(id);
-    // for (const hashtag of tagsToUpdate) {
-    //   hashtag.tweets.pull(id);
-    //   await hashtag.save();
-    // }
     return tweet;
   } catch (error) {
     if (error.statusCode == StatusCodes.NOT_FOUND) {
@@ -62,7 +57,26 @@ const deleteTweet = async (id) => {
   }
 };
 
+const getTweet = async (id) => {
+  try {
+    const tweet = tweetRepo.getOne(id);
+    return tweet;
+  } catch (error) {
+    if (error.statusCode == StatusCodes.NOT_FOUND) {
+      throw new AppError(
+        "The tweet you requested to is not present",
+        error.statusCode
+      );
+    }
+    throw new AppError(
+      "cannot fetch the data of given tweet",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
 module.exports = {
   createTweet,
   deleteTweet,
+  getTweet
 };
