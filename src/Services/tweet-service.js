@@ -8,7 +8,10 @@ const hashtagRepo = new hastagRepository();
 const createTweet = async (data) => {
   try {
     const content = data.content;
-    let tags = content.match(/#[a-zA-Z0-9_]+/g).map((tag) => tag.substring(1));
+    // Ensure that content.match() returns an array, or assign an empty array if it's null
+    let tags = (content.match(/#[a-zA-Z0-9_]+/g) || []).map((tag) =>
+      tag.substring(1)
+    );
     //user can include duplicate hashtags
     let tagSet = new Set(tags);
     tags = Array.from(tagSet);
@@ -78,5 +81,5 @@ const getTweet = async (id) => {
 module.exports = {
   createTweet,
   deleteTweet,
-  getTweet
+  getTweet,
 };
