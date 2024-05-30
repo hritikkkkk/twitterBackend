@@ -1,8 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const passport = require("passport");
 const app = express();
 const apiRoutes = require("./routes");
 const { ServerConfig } = require("./config");
+const { passportAuth } = require("./config/jwt-middleware");
+
 
 app.use(express.json());
 app.use(
@@ -10,6 +13,9 @@ app.use(
     extended: true,
   })
 );
+
+app.use(passport.initialize());
+passportAuth(passport);
 
 main()
   .then(() => {
@@ -22,6 +28,7 @@ main()
 async function main() {
   mongoose.connect(ServerConfig.DB);
 }
+
 
 app.use("/api", apiRoutes);
 

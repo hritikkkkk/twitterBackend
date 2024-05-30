@@ -1,3 +1,4 @@
 module.exports = {
-    TweetController:require("./tweet-controller")
-}
+  TweetController: require("./tweet-controller"),
+  UserController: require("./user-controller"),
+};
