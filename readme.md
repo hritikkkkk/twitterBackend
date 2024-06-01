@@ -26,7 +26,7 @@
 ### Features
 
 1. **Tweet Creation**: 
-   - Create tweets with up to 280 characters.
+   - Create tweets with up to 270 characters.
   
 2. **Like/Unlike and Comments**:
    - Like or unlike tweets or comments.
@@ -70,7 +70,7 @@
 
 4. **Run the server**:
    ```sh
-   npm start
+   npm run dev
    ```
 
 ### Usage
