@@ -11,13 +11,24 @@ const createComment = async (req, res) => {
       req.body.content
     );
     SuccessResponse.data = response;
-    return res.status(StatusCodes.OK).json(SuccessResponse);
+    return res.status(StatusCodes.CREATED).json(SuccessResponse);
   } catch (error) {
     ErrorResponse.error = error;
     return res.status(error.statusCode).json(ErrorResponse);
   }
 };
 
+const getComment = async (req, res) => {
+  try {
+    const response = await CommentService.getComment(req.params.id);
+    SuccessResponse.data = response;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
 module.exports = {
   createComment,
+  getComment,
 };

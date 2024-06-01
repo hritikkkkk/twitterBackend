@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.post("/", IsAuthenticate, CommentController.createComment);
 
+router.get("/:id", CommentController.getComment);
+
 module.exports = router;
