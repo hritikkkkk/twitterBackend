@@ -21,7 +21,7 @@ const userSignup = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const response = await UserService.userLogin({
-      email: req.body.email,
+      usernameOrEmail: req.body.usernameOrEmail,
       password: req.body.password,
     });
     SuccessResponse.data = response;
@@ -34,5 +34,5 @@ const userLogin = async (req, res) => {
 
 module.exports = {
   userSignup,
-  userLogin
+  userLogin,
 };
