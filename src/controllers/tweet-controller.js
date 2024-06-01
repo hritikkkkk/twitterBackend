@@ -40,8 +40,23 @@ const getTweet = async (req, res) => {
   }
 };
 
+const getAllTweets = async (req, res) => {
+  try {
+    const tweet = await TweetService.getAllTweets({
+      offset: req.params.offset,
+      limit: req.params.limit,
+    });
+    SuccessResponse.data = tweet;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
+
 module.exports = {
   createTweet,
   deleteTweet,
   getTweet,
+  getAllTweets,
 };

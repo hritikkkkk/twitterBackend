@@ -78,8 +78,20 @@ const getTweet = async (id) => {
   }
 };
 
+const getAllTweets = async (offset, limit) => {
+  try {
+    return await tweetRepo.getAllTweets(offset, limit);
+  } catch (error) {
+    throw new AppError(
+      "cannot fetch the data of tweets",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
 module.exports = {
   createTweet,
   deleteTweet,
   getTweet,
+  getAllTweets,
 };

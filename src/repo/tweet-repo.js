@@ -13,6 +13,11 @@ class tweetRepository extends CrudRepository {
     const tweet = await Tweet.findById(id).populate({ path: "comments" });
     return tweet;
   }
+  async getAllTweets(offset, limit) {
+    const tweet = await Tweet.find().skip(offset).limit(limit);
+    console.log(tweet)
+    return tweet;
+  }
 }
 
 module.exports = tweetRepository;
