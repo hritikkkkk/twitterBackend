@@ -4,7 +4,7 @@
 ## High-Level Overview of the Project 📊
 
 - **Tweet Creation**: Users can create a tweet.
-  - Each tweet can contain up to 280 characters.
+  - Each tweet can contain up to 270 characters.
   
 - **Like/Unlike and Comment**: 
   - Users can like or unlike a tweet or comment.
@@ -80,9 +80,9 @@
   - Like/Unlike a tweet or comment: `POST /api/v1/likes/toggle?modelId=your_model_id&modelType=your_model_type`
     - Replace `your_model_id` with the ID of the tweet or comment.
     - Replace `your_model_type` with either `"tweet"` or `"comment"`, depending on the type of model you're liking/unliking.
-  - **Comment on a tweet or comment**: `POST /api/comments?id=your_model_id&modelType=your_model_type`
+  - **Comment on a tweet or comment**: `POST /api/comments?modelId=your_model_id&modelType=your_model_type`
   - Parameters:
-    - `id`: The ID of the tweet or comment.
+    - `modelId`: The ID of the tweet or comment.
     - `modelType`: The type of model (`"tweet"` or `"comment"`).
   - Body: `{ "content": "your_comment" }`
   - Retrieve a tweet with comments: `GET /api/tweets/:id`
