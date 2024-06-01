@@ -9,6 +9,10 @@ class tweetRepository extends CrudRepository {
     const tweet = Tweet.findById(id).populate({ path: "likes" });
     return tweet;
   }
+  async getWithComments(id) {
+    const tweet = await Tweet.findById(id).populate({ path: "comments" });
+    return tweet;
+  }
 }
 
 module.exports = tweetRepository;

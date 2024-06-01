@@ -62,7 +62,7 @@ const deleteTweet = async (id) => {
 
 const getTweet = async (id) => {
   try {
-    const tweet = tweetRepo.getOne(id);
+    const tweet = tweetRepo.getWithComments(id);
     return tweet;
   } catch (error) {
     if (error.statusCode == StatusCodes.NOT_FOUND) {
