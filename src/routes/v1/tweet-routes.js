@@ -12,4 +12,6 @@ router.get("/:id", TweetController.getTweet);
 
 router.get("/", TweetController.getAllTweets);
 
+router.get("/hashtag/:id", TweetController.getTweetsByHashtag);
+
 module.exports = router;

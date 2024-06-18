@@ -93,9 +93,21 @@ const getAllTweets = async (offset, limit) => {
   }
 };
 
+const getTweetsByHashtag = async (id) => {
+  try {
+    return await hashtagRepo.getTweetsByHashtag(id);
+  } catch (error) {
+    throw new AppError(
+      "cannot fetch the data of hashtags",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
 module.exports = {
   createTweet,
   deleteTweet,
   getTweet,
   getAllTweets,
+  getTweetsByHashtag,
 };
