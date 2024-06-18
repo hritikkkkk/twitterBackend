@@ -8,37 +8,28 @@ const hashtagRepo = new hastagRepository();
 const createTweet = async (data) => {
   try {
     const content = data.content;
-
-    // Create the tweet first
     const tweet = await tweetRepo.create(data);
 
-    // Extract hashtags
     let tags = content.match(/#[a-zA-Z0-9_]+/g);
 
     if (tags) {
-      // Normalize tags to lowercase and remove the hash symbol
       tags = tags.map((tag) => tag.substring(1).toLowerCase());
-
-      // Remove duplicate tags
       tags = Array.from(new Set(tags));
 
-      // Find existing hashtags
       const existingHashtags = await hashtagRepo.findByTag(tags);
+
       const existingTagTitles = new Set(
         existingHashtags.map((tag) => tag.title)
       );
 
-      // Determine new hashtags
       const newHashtags = tags
         .filter((tag) => !existingTagTitles.has(tag))
         .map((tag) => ({ title: tag, tweets: [tweet.id] }));
 
-      // Bulk create new hashtags if any
       if (newHashtags.length > 0) {
         await hashtagRepo.bulkCreate(newHashtags);
       }
 
-      // Update existing hashtags with the new tweet ID
       await Promise.all(
         existingHashtags.map(async (tag) => {
           tag.tweets.push(tweet.id);
@@ -46,8 +37,6 @@ const createTweet = async (data) => {
         })
       );
     }
-
-    // Return the created tweet
     return tweet;
   } catch (error) {
     throw new AppError(
