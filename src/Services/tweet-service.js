@@ -8,35 +8,50 @@ const hashtagRepo = new hastagRepository();
 const createTweet = async (data) => {
   try {
     const content = data.content;
-    // Ensure that content.match() returns an array, or assign an empty array if it's null
-    let tags = (content.match(/#[a-zA-Z0-9_]+/g) || []).map((tag) =>
-      tag.substring(1)
-    );
-    //user can include duplicate hashtags
-    let tagSet = new Set(tags);
-    tags = Array.from(tagSet);
+
+    // Create the tweet first
     const tweet = await tweetRepo.create(data);
 
-    let existingtags = await hashtagRepo.findByTag(tags);
-    let presentTags = existingtags.map((tag) => tag.title);
+    // Extract hashtags
+    let tags = content.match(/#[a-zA-Z0-9_]+/g);
 
-    //  new hashtags
-    let newTags = tags
-      .filter((tag) => !presentTags.includes(tag))
-      .map((tag) => ({ title: tag, tweets: [tweet.id] }));
+    if (tags) {
+      // Normalize tags to lowercase and remove the hash symbol
+      tags = tags.map((tag) => tag.substring(1).toLowerCase());
 
-    if (newTags.length > 0) await hashtagRepo.bulkCreate(newTags);
+      // Remove duplicate tags
+      tags = Array.from(new Set(tags));
 
-    // Update existing hashtags with the new tweet ID
-    existingtags.forEach(async (tag) => {
-      tag.tweets.push(tweet.id);
-      await tag.save();
-    });
+      // Find existing hashtags
+      const existingHashtags = await hashtagRepo.findByTag(tags);
+      const existingTagTitles = new Set(
+        existingHashtags.map((tag) => tag.title)
+      );
 
+      // Determine new hashtags
+      const newHashtags = tags
+        .filter((tag) => !existingTagTitles.has(tag))
+        .map((tag) => ({ title: tag, tweets: [tweet.id] }));
+
+      // Bulk create new hashtags if any
+      if (newHashtags.length > 0) {
+        await hashtagRepo.bulkCreate(newHashtags);
+      }
+
+      // Update existing hashtags with the new tweet ID
+      await Promise.all(
+        existingHashtags.map(async (tag) => {
+          tag.tweets.push(tweet.id);
+          await tag.save();
+        })
+      );
+    }
+
+    // Return the created tweet
     return tweet;
   } catch (error) {
     throw new AppError(
-      "cannot create a new tweet",
+      "Cannot create a new tweet",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   }
