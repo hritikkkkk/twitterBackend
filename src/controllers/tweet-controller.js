@@ -1,18 +1,32 @@
 const { StatusCodes } = require("http-status-codes");
 const { TweetService } = require("../Services");
 const { SuccessResponse, ErrorResponse } = require("../utils/common");
+const multer = require("multer");
+const { storage } = require("../config/cloudinary");
+const upload = multer({ storage });
+const multipleUpload = upload.array("images", 10);
 
 const createTweet = async (req, res) => {
   try {
-    const tweet = await TweetService.createTweet({
-      content: req.body.content,
-    });
-    console.log(tweet);
-    SuccessResponse.data = tweet;
+    multipleUpload(req, res, async function (err) {
+      if (err) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          error: err,
+        });
+      }
 
-    return res.status(StatusCodes.CREATED).json(SuccessResponse);
+      const payload = { ...req.body };
+
+      if (req.files && req.files.length) {
+        payload.images = req.files.map((file) => file.path);
+      }
+
+      const tweet = await TweetService.createTweet(payload);
+
+      SuccessResponse.data = tweet;
+      return res.status(StatusCodes.OK).json(SuccessResponse);
+    });
   } catch (error) {
-    console.log(error);
     ErrorResponse.error = error;
     return res.status(error.statusCode).json(ErrorResponse);
   }
