@@ -79,10 +79,40 @@ const getTweetsByHashtag = async (req, res) => {
   }
 };
 
+const updateTweet = async (req, res) => {
+  try {
+    multipleUpload(req, res, async function (err) {
+      if (err) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          error: err,
+        });
+      }
+
+      const tweetId = req.params.id;
+      const payload = { ...req.body };
+
+      if (req.files && req.files.length) {
+        payload.images = req.files.map((file) => file.path);
+      }
+
+      const tweet = await TweetService.updateTweet(tweetId, payload);
+
+      SuccessResponse.data = tweet;
+      return res.status(StatusCodes.OK).json(SuccessResponse);
+    });
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(ErrorResponse);
+  }
+};
+
 module.exports = {
   createTweet,
   deleteTweet,
   getTweet,
   getAllTweets,
   getTweetsByHashtag,
+  updateTweet,
 };

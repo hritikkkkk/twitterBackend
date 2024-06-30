@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const { tweetRepository, hastagRepository } = require("../repo");
 const AppError = require("../utils/errors/app-error");
-
+const cloudinary = require("cloudinary").v2;
 const tweetRepo = new tweetRepository();
 const hashtagRepo = new hastagRepository();
 
@@ -104,10 +104,70 @@ const getTweetsByHashtag = async (id) => {
   }
 };
 
+const updateTweet = async (tweetId, data) => {
+  try {
+    const content = data.content;
+
+    const tweet = await tweetRepo.find(tweetId);
+    if (!tweet) throw new AppError("Tweet not found", StatusCodes.NOT_FOUND);
+
+    if (data.images && tweet.images) {
+      await Promise.all(
+        tweet.images.map(async (imagePath) => {
+          const segments = imagePath.split("/");
+          const publicIdWithExtension = segments[segments.length - 1];
+          const publicId = publicIdWithExtension.split(".")[0];
+          await cloudinary.uploader.destroy(`tweets/${publicId}`);
+        })
+      );
+    }
+    const updatedTweet = await tweetRepo.update(tweetId, data);
+
+    let newTags = content.match(/#[a-zA-Z0-9_]+/g);
+
+    if (newTags) {
+      newTags = newTags.map((tag) => tag.substring(1).toLowerCase());
+      newTags = Array.from(new Set(newTags));
+    }
+
+    const existingHashtags = await hashtagRepo.findByTag(newTags || []);
+    const existingTagTitles = new Set(existingHashtags.map((tag) => tag.title));
+
+    const newHashtags = (newTags || []).filter(
+      (tag) => !existingTagTitles.has(tag)
+    );
+    const newHashtagObjects = newHashtags.map((tag) => ({
+      title: tag,
+      tweets: [tweet.id],
+    }));
+
+    if (newHashtagObjects.length > 0) {
+      await hashtagRepo.bulkCreate(newHashtagObjects);
+    }
+    await Promise.all(
+      existingHashtags.map(async (tag) => {
+        if (!tag.tweets.includes(tweet.id)) {
+          tag.tweets.push(tweet.id);
+          await tag.save();
+        }
+      })
+    );
+
+    return updatedTweet;
+  } catch (error) {
+    console.log(error);
+    throw new AppError(
+      "Cannot update the tweet",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
 module.exports = {
   createTweet,
   deleteTweet,
   getTweet,
   getAllTweets,
   getTweetsByHashtag,
+  updateTweet,
 };

@@ -14,4 +14,6 @@ router.get("/", TweetController.getAllTweets);
 
 router.get("/hashtag/:id", TweetController.getTweetsByHashtag);
 
+router.put("/:id", IsAuthenticate, TweetController.updateTweet );
+
 module.exports = router;

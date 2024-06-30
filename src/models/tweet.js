@@ -41,4 +41,20 @@ tweetSchema.pre("findOneAndDelete", async function (next) {
     next(error);
   }
 });
+
+tweetSchema.pre("findOneAndUpdate", async function (next) {
+  try {
+    const tweetId = this.getQuery()._id;
+    const Hashtag = mongoose.model("Hashtag");
+
+    await Hashtag.updateMany(
+      { tweets: tweetId },
+      { $pull: { tweets: tweetId } }
+    );
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = mongoose.model("Tweet", tweetSchema);
