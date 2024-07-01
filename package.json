@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon src/index.js"
+    "start":"node src/app.js",
+    "dev": "npx nodemon src/app.js"
   },
   "author": "hritik",
   "license": "ISC",
