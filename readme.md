@@ -9,6 +9,7 @@ This project addresses engineering challenges by ensuring that when a user delet
 1. **Tweet Creation**: 
    - Create tweets with up to 270 characters.
    - Update tweets.
+   - Upload Multiple Images with Tweet
 
 2. **Likes and Comments**:
    - Like or unlike tweets or comments.
