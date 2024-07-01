@@ -1,34 +1,16 @@
-
 # Twitter-Backend
 
 ## High-Level Overview of the Project 📊
 
-- **Tweet Creation**: Users can create a tweet.
-  - Each tweet can contain up to 270 characters.
-  
-- **Like/Unlike and Comment**: 
-  - Users can like or unlike a tweet or comment.
-  - Users can comment on tweets or other comments, creating nested comment threads.
-
-- **Thread Access**: 
-  - Users can access threads of comments and tweets to follow conversations.
-
-- **Pagination**: 
-  - Implement pagination on tweets for efficient data retrieval.
-
-- **User Authentication**:
-  - User authentication is handled with `passport-jwt`.
-  - Users can log in using either their username or email.
-
-- **Hashtags**: 
-  - Each tweet may include one or more hashtags.
+This project addresses engineering challenges by ensuring that when a user deletes or updates a tweet, the associated images are removed from the cloud platform, and their references are deleted from the database. Additionally, posts can only be deleted or updated by the respective admin.
 
 ### Features
 
 1. **Tweet Creation**: 
    - Create tweets with up to 270 characters.
-  
-2. **Like/Unlike and Comments**:
+   - Update tweets.
+
+2. **Likes and Comments**:
    - Like or unlike tweets or comments.
    - Comment on tweets or other comments.
 
@@ -37,7 +19,7 @@
    - Users can view and interact with comment threads.
 
 4. **Pagination**:
-   - Pagination support for retrieving tweets efficiently.
+   - Support for paginating tweets efficiently.
 
 5. **Authentication**:
    - JWT-based authentication with `passport-jwt`.
@@ -66,6 +48,9 @@
      MONGO_URL="database url"
      JWT_SECRET="jwt_secret"
      JWT_EXPIRY="expiry time"
+     CLOUD_NAME="Cloudinary_NAME"
+     CLOUD_API_KEY="Cloudinary_API_KEY"
+     CLOUD_API_SECRET="Cloudinary_API_SECRET"
      ```
 
 4. **Run the server**:
@@ -75,23 +60,80 @@
 
 ### Usage
 
-- **API Endpoints**:
-  - Create a tweet: `POST /api/tweets`
-  - Like/Unlike a tweet or comment: `POST /api/v1/likes/toggle?modelId=your_model_id&modelType=your_model_type`
-    - Replace `your_model_id` with the ID of the tweet or comment.
-    - Replace `your_model_type` with either `"tweet"` or `"comment"`, depending on the type of model you're liking/unliking.
-  - **Comment on a tweet or comment**: `POST /api/comments?modelId=your_model_id&modelType=your_model_type`
-  - Parameters:
+#### API Endpoints
+
+- **User signup**: `POST /api/v1/user/signup`
+  - Body: 
+    ```json
+    { 
+      "username": "your_name",
+      "email": "email@gmail.com",
+      "password": "pass123"
+    }
+    ```
+
+- **User login**: `POST /api/v1/user/login`
+  - Body: 
+    ```json
+    {
+      "usernameOrEmail": "your_name OR email@gmail.com",
+      "password": "pass123"
+    }
+    ```
+
+- **Create a tweet**: `POST /api/v1/tweets`
+  - Body: 
+    ```json
+    { 
+      "content": "tweet content",
+      "images": ["image url"]
+    }
+    ```
+
+- **Comment on a tweet or comment**: `POST /api/v1/comments?modelId=your_model_id&modelType=your_model_type`
+  - Query Parameters:
     - `modelId`: The ID of the tweet or comment.
     - `modelType`: The type of model (`"tweet"` or `"comment"`).
-  - Body: `{ "content": "your_comment" }`
-  - Retrieve a tweet with comments: `GET /api/tweets/:id`
-  - Retrieve paginated tweets: `GET /api/tweets?offset=1&limit=10`
-  - User signup:`POST /api/user/signup`
-  - User login: `POST /api/user/login`
+  - Body: 
+    ```json
+    { 
+      "content": "your_comment"
+    }
+    ```
 
-- **JWT Authentication**:
-  - Protect routes using JWT authentication middleware.
+- **Like/Unlike a tweet or comment**: `POST /api/v1/likes/toggle?modelId=your_model_id&modelType=your_model_type`
+  - Query Parameters:
+    - `modelId`: The ID of the tweet or comment.
+    - `modelType`: The type of model (`"tweet"` or `"comment"`).
+
+- **Retrieve a tweet with comments**: `GET /api/v1/tweets/:id`
+  - Replace `:id` with the ID of the tweet.
+
+- **Retrieve paginated tweets**: `GET /api/v1/tweets?offset=1&limit=10`
+  - Query Parameters:
+    - `offset`: `1`.
+    - `limit`: `10`.
+
+- **Retrieve hashtag-specific tweets**: `GET /api/v1/tweets/hashtag/:id`
+  - Replace `:id` with the ID of the hashtag.
+
+- **Update a tweet**: `PATCH /api/v1/tweets/:id`
+  - Body: 
+    ```json
+    { 
+      "content": "updated tweet content",
+      "images": ["updated image url"]
+    }
+    ```
+
+- **Delete a tweet**: `DELETE /api/v1/tweets/:id`
+  - Replace `:id` with the ID of the tweet.
+
+### JWT Authentication
+
+- Protect routes using JWT authentication middleware.
+- Custom middlewares for authenticating specific user posts to ensure only the owner can delete or update tweets.
+
 
 
 
