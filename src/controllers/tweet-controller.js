@@ -16,12 +16,13 @@ const createTweet = async (req, res) => {
       }
 
       const payload = { ...req.body };
+      const user = req.user;
 
       if (req.files && req.files.length) {
         payload.images = req.files.map((file) => file.path);
       }
 
-      const tweet = await TweetService.createTweet(payload);
+      const tweet = await TweetService.createTweet(payload, user);
 
       SuccessResponse.data = tweet;
       return res.status(StatusCodes.OK).json(SuccessResponse);

@@ -5,9 +5,10 @@ const cloudinary = require("cloudinary").v2;
 const tweetRepo = new tweetRepository();
 const hashtagRepo = new hastagRepository();
 
-const createTweet = async (data) => {
+const createTweet = async (data, user) => {
   try {
     const content = data.content;
+    data.owner = user._id;
     const tweet = await tweetRepo.create(data);
 
     let tags = content.match(/#[a-zA-Z0-9_]+/g);

@@ -1,3 +1,4 @@
+const tweet = require("../models/tweet");
 const { ErrorResponse } = require("../utils/common");
 const AppError = require("../utils/errors/app-error");
 const { StatusCodes } = require("http-status-codes");
@@ -30,6 +31,30 @@ const IsAuthenticate = (req, res, next) => {
   })(req, res, next);
 };
 
+const isOwner = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const Tweet = await tweet.findById(id);
+
+    if (!Tweet)
+      throw new AppError("tweet does not exist", StatusCodes.NOT_FOUND);
+
+    if (!Tweet.owner.equals(req.user._id))
+      throw new AppError(
+        "You are not authorized to update or delete this tweet",
+        StatusCodes.UNAUTHORIZED
+      );
+
+    next();
+  } catch (error) {
+    console.error(error);
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
+
 module.exports = {
   IsAuthenticate,
+  isOwner,
 };
